@@ -1,7 +1,7 @@
 function [V,m,h,n,t] = hhrun(I,tspan, v, mi, hi, ni,Plot)   
 %   This function simulates the Hodgkin-Huxley model for user specified input
 %   current.
-%  
+%
 %   hhrun(I,tspan,V,m,h,n,Plot) function simulates the Hodgkin-Huxley model 
 %   for the squid giant axon for user specified values of the current input,
 %   timespan, initial values of the variables and the solution method. As
@@ -52,15 +52,14 @@ function [V,m,h,n,t] = hhrun(I,tspan, v, mi, hi, ni,Plot)
   h(1)=hi;
   n(1)=ni;
   
-  % Euler method
-  sigma = 3;
   for i=1:loop-1
-      Itemp=I+I*randn()*sigma;%Gaussian distribution with zero mean and standard deviation = 3
-      V(i+1) = V(i) + dt*(gNa*m(i)^3*h(i)*(eNa-(V(i)+65)) + gK*n(i)^4*(eK-(V(i)+65)) + gL*(eL-(V(i)+65)) + Itemp);
+      V(i+1) = V(i) + dt*(gNa*m(i)^3*h(i)*(eNa-(V(i)+65)) + gK*n(i)^4*(eK-(V(i)+65)) + gL*(eL-(V(i)+65)) + I);
       m(i+1) = m(i) + dt*(alphaM(V(i))*(1-m(i)) - betaM(V(i))*m(i));
       h(i+1) = h(i) + dt*(alphaH(V(i))*(1-h(i)) - betaH(V(i))*h(i));
       n(i+1) = n(i) + dt*(alphaN(V(i))*(1-n(i)) - betaN(V(i))*n(i));
   end
+  
+  
   
   if Plot == 1
     figure
@@ -90,7 +89,6 @@ function [V,m,h,n,t] = hhrun(I,tspan, v, mi, hi, ni,Plot)
 end
 
 % alpha and beta functions for the gating variables 
-
 function aM = alphaM(V)
 aM = (2.5-0.1*(V+65)) ./ (exp(2.5-0.1*(V+65)) -1);
 end
